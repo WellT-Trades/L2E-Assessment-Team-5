@@ -6,8 +6,12 @@ from validation import (
 )
 from flask import Flask, request, jsonify, render_template
 from comparison import compare_json
+from werkzeug.exceptions import BadRequest
 
 app = Flask(__name__)
+@app.errorhandler(BadRequest)
+def handle_bad_request(error):
+    return jsonify({"error": "Invalid JSON request."}), 400
 
 
 @app.route("/")
