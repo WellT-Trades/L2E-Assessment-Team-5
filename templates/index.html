@@ -1,41 +1,116 @@
 <!DOCTYPE html>
 
 <html lang="en">
-    <style>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
     body {
         font-family: Arial, sans-serif;
         max-width: 1000px;
         margin: 30px auto;
-        padding: 20px;
-        background-color: #f4f6f8;
+        padding: 30px;
+        background-color: #0B1F33;
+        color: #223451;
+    }
+
+    h1 {
+        color: #E5B72F;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        color: #0F7635;
+        font-size: 19px;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #D1D9E6;
+        text-align: center;
+        margin-bottom: 30px;
     }
 
     section {
-        margin-bottom: 20px;
+        margin-bottom: 24px;
+        padding: 20px;
+        background-color: #FFFFFF;
+        border: 1px solid #D1DCE8;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     textarea {
         width: 100%;
-        box-sizing: border-box;
-        padding: 10px;
-        font-family: monospace;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        min-height: 150px;
+        padding: 14px;
+        font-family: Consolas, monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #1E293B;
+        background-color: #F1F5F9;
+        border: 1px solid #CBD5E1;
+        border-radius: 7px;
+        resize: vertical;
+    }
+
+    textarea:focus {
+        outline: 2px solid #14B8A6;
+        border-color: #14B8A6;
     }
 
     button {
-        padding: 10px 16px;
-        margin-right: 10px;
+        padding: 12px 20px;
+        margin: 5px 8px 15px 0;
+        border: none;
+        border-radius: 7px;
+        background-color: #C69904;
+        color: #10233F;
+        font-size: 14px;
+        font-weight: bold;
         cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    button:hover {
+        background-color: #E5B72F;
+        transform: translateY(-1px);
+    }
+
+    button:focus-visible {
+        outline: 3px solid #14B8A6;
+        outline-offset: 3px;
     }
 
     pre {
-        background-color: white;
-        padding: 15px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
+        min-height: 70px;
+        padding: 20px;
+        background-color: #EAFBF7;
+        color: #134E4A;
+        border: 1px solid #99E6D8;
+        border-left: 5px solid #14B8A6;
+        border-radius: 8px;
         white-space: pre-wrap;
         overflow-wrap: anywhere;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+        body {
+            margin: 10px auto;
+            padding: 15px;
+        }
+
+        section {
+            padding: 14px;
+        }
+
+        button {
+            width: 100%;
+            margin-right: 0;
+        }
     }
 </style>
 
