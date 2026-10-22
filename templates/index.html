@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: #f4f6f8;
+    }
+
+    section {
+        margin-bottom: 20px;
+    }
+
+    textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        font-family: monospace;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        padding: 10px 16px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    pre {
+        background-color: white;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Diff and Validation Tool</title>
+</head>
+<body>
+    <h1>JSON Diff and Validation Tool</h1>
+    <p>Compare JSON documents and validate their syntax.</p>
+
+<section>
+    <h2>Original JSON</h2>
+    <textarea id="original" rows="10" cols="50"
+        placeholder='{"name": "WellT", "age": 25}'></textarea>
+</section>
+
+<section>
+    <h2>Updated JSON</h2>
+    <textarea id="updated" rows="10" cols="50"
+        placeholder='{"name": "WellT", "age": 26}'></textarea>
+</section>
+
+<section>
+    <h2>JSON Schema (Optional)</h2>
+    <textarea id="schema" rows="10" cols="50"
+        placeholder='{"type": "object", "required": ["name"]}'></textarea>
+</section>
+
+<button id="compare-button">Compare JSON</button>
+<button id="validate-button">Validate JSON</button>
+
+<h2>Comparison Results</h2>
+<pre id="results">Your comparison results will appear here.</pre>
+
+<script>
+    function displayChanges(changes) {
+const results = document.getElementById("results");
+
+if (changes.length === 0) {
+    results.textContent = "No changes detected.";
+    return;
+}
+
+const formattedResults = changes.map(change => {
+    let message = `${change.type.toUpperCase()}: ${change.path}`;
+
+    if ("old_value" in change) {
+        message += `\n  Old value: ${JSON.stringify(change.old_value)}`;
+    }
+
+    if ("new_value" in change) {
+        message += `\n  New value: ${JSON.stringify(change.new_value)}`;
+    }
+
+    return message;
+});
+
+results.textContent = formattedResults.join("\n\n");
+
+}
+
+function displayValidation(data) {
+const results = document.getElementById("results");
+
+if (!data.valid) {
+    results.textContent = "INVALID JSON\n" + data.message;
+} else if (data.schema_valid === false) {
+    results.textContent =
+        "JSON SYNTAX: VALID\n" +
+        "SCHEMA VALIDATION: FAILED\n" +
+        data.message;
+} else if (data.schema_valid === true) {
+    results.textContent =
+        "JSON SYNTAX: VALID\n" +
+        "SCHEMA VALIDATION: PASSED\n" +
+        data.message;
+} else {
+    results.textContent =
+        "JSON SYNTAX: VALID\n" + data.message;
+}
+
+}
+
+
+    // Compare JSON documents
+    document.getElementById("compare-button").addEventListener("click", async function () {
+        const originalText = document.getElementById("original").value;
+        const updatedText = document.getElementById("updated").value;
+        const results = document.getElementById("results");
+
+        try {
+            const original = JSON.parse(originalText);
+            const updated = JSON.parse(updatedText);
+
+            const response = await fetch("/compare", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    original: original,
+                    updated: updated
+                })
+            });
+
+            const data = await response.json();
+            displayChanges(data);
+
+        } catch (error) {
+            results.textContent = "Error: " + error.message;
+        }
+    });
+
+    // Validate JSON and optional schema
+    document.getElementById("validate-button").addEventListener("click", async function () {
+        const originalText = document.getElementById("original").value;
+        const schemaText = document.getElementById("schema").value.trim();
+        const results = document.getElementById("results");
+
+        try {
+            const requestData = {
+                json_text: originalText
+            };
+
+            if (schemaText) {
+                requestData.schema = JSON.parse(schemaText);
+            }
+
+            const response = await fetch("/validate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            const data = await response.json();
+            displayValidation(data);
+
+        } catch (error) {
+            results.textContent = "Error: " + error.message;
+        }
+    });
+</script>
+
+</body>
+</html>
